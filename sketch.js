@@ -173,7 +173,10 @@ function setupCircles() {
   }
 }
 
-// Custom class for split circles with a dividing angle
+
+// This technique was NOT covered in class, 
+// It is used to convey our ideas to ChatGPT for generation.
+// so here's a breakdown:
 class SplitCircle {
   constructor(x, y, r, leftRatio, leftColor, rightColor, borderColor, borderWidth, angle = 0) {
     this.x = x;
@@ -186,7 +189,7 @@ class SplitCircle {
     this.borderWidth = borderWidth;
     this.angle = angle; // Angle for the dividing line in radians
   }
-  // Method to display the split circle
+  
   display() {
     push();
     let d = this.r * 2;
@@ -196,20 +199,28 @@ class SplitCircle {
     noStroke();
     ellipse(this.x, this.y, d, d);
 
-    // Compute division vector based on angle
+    // This technique was NOT covered in class, 
+    // It is used to convey our ideas to ChatGPT for generation.
+    // so here's a breakdown:
+    // We use vector math (dot product) to divide the circle at an angle.
+    // This method lets us split the circle into two parts, not just left/right or top/bottom.
+    // We loop through all the angles around the circle and test if each point lies on the "left side" of the split line.
     let normalX = cos(this.angle);
     let normalY = sin(this.angle);
+    // 'threshold' controls how much of the circle should be filled as the left color
     let threshold = (2 * this.leftRatio - 1) * this.r;
 
     // Draw left-colored segment
     fill(...this.leftColor);
     beginShape();
-    let step = 0.05;
+    let step = 0.05;  // angle step for drawing shape
     for (let a = 0; a <= TWO_PI + step; a += step) {
       let dx = cos(a) * this.r;
       let dy = sin(a) * this.r;
 
-      // Check if the point is on the left side of the dividing line
+      // Dot product test:
+      // This calculates how far each point is from the dividing line.
+      // If the result is less than the threshold, the point is on the "left" side.
       let dot = dx * normalX + dy * normalY;
       if (dot < threshold) {
         vertex(this.x + dx, this.y + dy);
@@ -217,9 +228,9 @@ class SplitCircle {
     }
     endShape(CLOSE);
 
-    // Draw border
+    // Draw outer border
     stroke(...this.borderColor);
-    strokeWeight(this.borderWidth / scaleFactor);
+    strokeWeight(this.borderWidth / scaleFactor);  // scaled for responsive design
     noFill();
     ellipse(this.x, this.y, d, d);
     pop();
